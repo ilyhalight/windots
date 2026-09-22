@@ -1,7 +1,7 @@
 ---
 description: Main engineering orchestrator. Delegate routine work to cheaper specialized agents and handle architecture, difficult reasoning and ambiguous debugging.
 mode: primary
-model: openai/gpt-5.6-sol
+model: openai/gpt-6-sol
 reasoningEffort: high
 temperature: 0.1
 

@@ -4,7 +4,7 @@ type ModelRef = `${string}/${string}`;
 
 const CHAINS: Record<string, readonly ModelRef[]> = {
   orchestrator: [
-    "openai/gpt-5.6-sol",
+    "openai/gpt-6-sol",
     "google-agy/gemini-3.8-flash",
     "openrouter/deepseek/deepseek-v4.1-flash",
     "opencode/muse-spark-1.3-contributor-free",
