@@ -1,7 +1,7 @@
 ---
 description: Main implementation worker for normal features, refactors, tests and bug fixes.
 mode: subagent
-model: opencode/muse-spark-1.3-contributor-free
+model: openrouter/deepseek/deepseek-v4.1-flash
 reasoningEffort: high
 steps: 25
 temperature: 0.1

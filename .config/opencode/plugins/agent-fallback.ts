@@ -24,14 +24,14 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
   ],
 
   implement: [
+    "openrouter/deepseek/deepseek-v4.1-flash",
     "opencode/muse-spark-1.3-contributor-free",
     "google-agy/gemini-3.8-flash",
-    "openrouter/deepseek/deepseek-v4.1-flash",
   ],
 
   "implement-hard": [
-    "openrouter/deepseek/deepseek-v4.1-flash",
     "opencode/muse-spark-1.3-contributor-free",
+    "openrouter/deepseek/deepseek-v4.1-flash",
     "google-agy/gemini-3.8-flash",
   ],
 
