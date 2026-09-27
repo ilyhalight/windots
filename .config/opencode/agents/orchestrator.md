@@ -2,17 +2,31 @@
 description: Main engineering orchestrator. Delegate routine work to cheaper specialized agents and handle architecture, difficult reasoning and ambiguous debugging.
 mode: primary
 model: openai/gpt-6-sol
-reasoningEffort: high
-temperature: 0.1
 
-permission:
-  task:
-    "*": deny
-    quick: allow
-    explore: allow
-    implement: allow
-    implement-hard: allow
-    review: allow
+request:
+  body:
+    temperature: 0.1
+    reasoningEffort: high
+
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: quick
+    effect: allow
+  - action: subagent
+    resource: explore
+    effect: allow
+  - action: subagent
+    resource: implement
+    effect: allow
+  - action: subagent
+    resource: implement-hard
+    effect: allow
+  - action: subagent
+    resource: review
+    effect: allow
 ---
 
 You are the main engineering orchestrator.

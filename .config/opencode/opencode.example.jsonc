@@ -1,22 +1,26 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "orchestrator",
-  "subagent_depth": 1,
-  "plugin": [
+  "experimental": {
+    "subagent_depth": 1,
+  },
+  "plugins": [
     "opencode-wakatime",
     "@dietrichgebert/ponytail",
-    "@anthonyhaussman/opencode-agy-auth",
+    "@anthonyhaussman/opencode-agy-auth@alpha"
   ],
-  "permission": {
-    "external_directory": {
-      "~/.local/share/opencode/worktree/**": "allow",
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "~/.local/share/opencode/worktree/**",
+      "effect": "allow",
     },
-  },
+  ],
   "provider": {
     "openrouter": {
       "models": {
         "deepseek/deepseek-v4.1-flash": {
-          "options": {
+          "settings": {
             "provider": {
               "order": ["deepseek"],
               "allow_fallbacks": true,

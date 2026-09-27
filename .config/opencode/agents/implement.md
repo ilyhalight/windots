@@ -2,12 +2,17 @@
 description: Main implementation worker for normal features, refactors, tests and bug fixes.
 mode: subagent
 model: openai/gpt-6-luna
-reasoningEffort: high
 steps: 25
-temperature: 0.1
 
-permission:
-  task: deny
+request:
+  body:
+    temperature: 0.1
+    reasoningEffort: high
+
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
 ---
 
 Implement the requested change.

@@ -2,12 +2,17 @@
 description: Strong coding agent for difficult implementations, large refactors, complex debugging and multi-component changes.
 mode: subagent
 model: opencode/muse-spark-1.3-contributor-free
-reasoningEffort: xhigh
 steps: 40
-temperature: 0.1
 
-permission:
-  task: deny
+request:
+  body:
+    temperature: 0.1
+    reasoningEffort: xhigh
+
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
 ---
 
 Handle difficult implementation work independently.

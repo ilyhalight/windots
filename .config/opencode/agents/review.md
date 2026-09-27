@@ -2,13 +2,20 @@
 description: Strong independent reviewer for completed code, architecture proposals, technical decisions and complex implementation plans.
 mode: subagent
 model: google-agy/gemini-3.8-flash
-reasoningEffort: high
 steps: 25
-temperature: 0.1
 
-permission:
-  edit: deny
-  task: deny
+request:
+  body:
+    temperature: 0.1
+    reasoningEffort: high
+
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
 ---
 
 Act as an independent technical reviewer.
