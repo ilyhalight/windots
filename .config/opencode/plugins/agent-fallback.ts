@@ -24,6 +24,9 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
   ],
 
   implement: [
+    "openai/gpt-6-luna",
+    // big TTFT but free
+    "xkiro/qwen/qwen3.8-omni-flash:free",
     "openrouter/deepseek/deepseek-v4.1-flash",
     "opencode/muse-spark-1.3-contributor-free",
     "google-agy/gemini-3.8-flash",
