@@ -1,13 +1,8 @@
 ---
 description: Fast inexpensive worker for trivial localized tasks, obvious fixes, small transformations and simple questions.
 mode: subagent
-model: inception/mercury-2.5
+model: inception/mercury-2.5#medium
 steps: 8
-
-request:
-  body:
-    temperature: 0.1
-    reasoningEffort: medium
 
 permissions:
   - action: subagent

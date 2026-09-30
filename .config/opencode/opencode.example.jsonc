@@ -6,8 +6,9 @@
   },
   "plugins": [
     "opencode-wakatime",
-    "@dietrichgebert/ponytail",
-    "@anthonyhaussman/opencode-agy-auth@alpha"
+    // "@dietrichgebert/ponytail",
+    "@anthonyhaussman/opencode-agy-auth@alpha",
+    "opencode-with-claude"
   ],
   "permissions": [
     {
@@ -17,6 +18,12 @@
     },
   ],
   "provider": {
+    "anthropic": {
+      "settings": {
+        "baseURL": "http://127.0.0.1:3456/v1",
+        "apiKey": "dummy"
+      }
+    },
     "openrouter": {
       "models": {
         "deepseek/deepseek-v4.1-flash": {

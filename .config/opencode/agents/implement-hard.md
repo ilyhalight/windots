@@ -1,13 +1,8 @@
 ---
 description: Strong coding agent for difficult implementations, large refactors, complex debugging and multi-component changes.
 mode: subagent
-model: opencode/muse-spark-1.3-contributor-free
+model: anthropic/claude-sonnet-5-5#high
 steps: 40
-
-request:
-  body:
-    temperature: 0.1
-    reasoningEffort: xhigh
 
 permissions:
   - action: subagent

@@ -4,7 +4,7 @@ type ModelRef = `${string}/${string}`;
 
 const CHAINS: Record<string, readonly ModelRef[]> = {
   orchestrator: [
-    "openai/gpt-6-sol",
+    "anthropic/claude-opus-5-5",
     "google-agy/gemini-3.8-flash",
     "openrouter/deepseek/deepseek-v4.1-flash",
     "opencode/muse-spark-1.3-contributor-free",
@@ -24,7 +24,8 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
   ],
 
   implement: [
-    "openai/gpt-6-luna",
+    "anthropic/claude-sonnet-5-5",
+    "opencode/muse-spark-1.3-contributor-free",
     // big TTFT but free
     "xkiro/qwen/qwen3.8-omni-flash:free",
     "openrouter/deepseek/deepseek-v4.1-flash",
@@ -33,12 +34,14 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
   ],
 
   "implement-hard": [
-    "opencode/muse-spark-1.3-contributor-free",
+    "anthropic/claude-sonnet-5-5",
     "openrouter/deepseek/deepseek-v4.1-flash",
     "google-agy/gemini-3.8-flash",
   ],
 
   review: [
+    // remove after sub end
+    "openai/gpt-6.1-sol",
     "google-agy/gemini-3.8-flash",
     "openrouter/z-ai/glm-5.3-flash",
     "openrouter/deepseek/deepseek-v4.1-flash",
@@ -83,11 +86,7 @@ function findStatus(error: unknown): number | undefined {
 
   const value = error as Record<string, any>;
 
-  const status =
-    value.status ??
-    value.statusCode ??
-    value.data?.status ??
-    value.data?.statusCode;
+  const status = value.status ?? value.statusCode ?? value.data?.status ?? value.data?.statusCode;
 
   if (typeof status === "number") return status;
 
@@ -124,9 +123,7 @@ function getCooldown(error: unknown): number {
 
 function prepareParts(parts: any[]) {
   return parts
-    .filter((part) =>
-      ["text", "file", "agent", "subtask"].includes(part.type),
-    )
+    .filter((part) => ["text", "file", "agent", "subtask"].includes(part.type))
     .map((part) => {
       const copy = structuredClone(part);
 
@@ -159,10 +156,7 @@ export default Plugin.define({
       message: string,
       extra?: Record<string, unknown>,
     ) => {
-      console[level === "debug" ? "log" : level](
-        `[agent-fallback] ${message}`,
-        extra ?? "",
-      );
+      console[level === "debug" ? "log" : level](`[agent-fallback] ${message}`, extra ?? "");
     };
 
     const available = (model: ModelRef) => {
@@ -178,10 +172,7 @@ export default Plugin.define({
       return false;
     };
 
-    const findNextModel = (
-      agent: string,
-      current: ModelRef,
-    ): ModelRef | undefined => {
+    const findNextModel = (agent: string, current: ModelRef): ModelRef | undefined => {
       const chain = CHAINS[agent];
 
       if (!chain) return;
@@ -205,9 +196,7 @@ export default Plugin.define({
 
       const messages = await ctx.session.context({ sessionID });
 
-      const lastUser = [...messages]
-        .reverse()
-        .find((message: any) => message.type === "user");
+      const lastUser = [...messages].reverse().find((message: any) => message.type === "user");
 
       const lastAssistant = [...messages]
         .reverse()
@@ -277,9 +266,7 @@ export default Plugin.define({
             model: failedModel,
           });
 
-          console.error(
-            `[agent-fallback] ${state.agent}: no available fallback models`,
-          );
+          console.error(`[agent-fallback] ${state.agent}: no available fallback models`);
 
           return;
         }
@@ -295,9 +282,7 @@ export default Plugin.define({
          * Stop OpenCode's built-in retry first, otherwise the original
          * model and the fallback could start simultaneously.
          */
-        await ctx.session
-          .interrupt({ sessionID, continue: false })
-          .catch(() => {});
+        await ctx.session.interrupt({ sessionID, continue: false }).catch(() => {});
 
         // Give the session time to transition from busy/retry to idle.
         await new Promise((resolve) => setTimeout(resolve, 150));
@@ -313,16 +298,12 @@ export default Plugin.define({
         const userText = (lastUser as any).text as string;
 
         if (!userText) {
-          throw new Error(
-            "Cannot replay fallback: user message has no text",
-          );
+          throw new Error("Cannot replay fallback: user message has no text");
         }
 
         state.model = next;
 
-        console.warn(
-          `[agent-fallback] ${state.agent}: ${failedModel} → ${next}`,
-        );
+        console.warn(`[agent-fallback] ${state.agent}: ${failedModel} → ${next}`);
 
         // Replay the original user turn on the next model.
         await ctx.session.switchModel({
@@ -370,10 +351,7 @@ export default Plugin.define({
 
           if (info.role === "assistant") {
             state.agent = info.agent ?? state.agent;
-            state.model = modelRef(
-              info.providerID,
-              info.modelID ?? info.model?.id,
-            );
+            state.model = modelRef(info.providerID, info.modelID ?? info.model?.id);
             sessions.set(sessionID, state);
 
             if (info.error && isRetryable(info.error)) {

@@ -1,13 +1,8 @@
 ---
 description: Read-only repository exploration agent for finding files, symbols, usages, dependencies and understanding existing code.
 mode: subagent
-model: google-agy/gemini-3.8-flash
+model: google-agy/gemini-3.8-flash#high
 steps: 18
-
-request:
-  body:
-    temperature: 0.1
-    reasoningEffort: high
 
 permissions:
   - action: edit

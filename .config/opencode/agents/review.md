@@ -1,13 +1,8 @@
 ---
 description: Strong independent reviewer for completed code, architecture proposals, technical decisions and complex implementation plans.
 mode: subagent
-model: google-agy/gemini-3.8-flash
+model: openai/gpt-6.1-sol#high
 steps: 25
-
-request:
-  body:
-    temperature: 0.1
-    reasoningEffort: high
 
 permissions:
   - action: edit
@@ -21,12 +16,14 @@ permissions:
 Act as an independent technical reviewer.
 
 Depending on the task, review either:
+
 - completed code changes;
 - an architecture proposal;
 - an implementation plan;
 - a technical decision.
 
 Look for:
+
 - correctness bugs;
 - regressions;
 - missed edge cases;

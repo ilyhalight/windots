@@ -1,13 +1,8 @@
 ---
 description: Main implementation worker for normal features, refactors, tests and bug fixes.
 mode: subagent
-model: openai/gpt-6-luna
+model: anthropic/claude-sonnet-5-5#high
 steps: 25
-
-request:
-  body:
-    temperature: 0.1
-    reasoningEffort: high
 
 permissions:
   - action: subagent
