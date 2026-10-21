@@ -6,35 +6,36 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
   orchestrator: [
     "anthropic/claude-opus-5-5",
     "google-agy/gemini-3.8-flash",
+    "opencode/deepseek-v4.1-flash-free",
     "openrouter/deepseek/deepseek-v4.1-flash",
-    "opencode/muse-spark-1.3-contributor-free",
   ],
 
   quick: [
-    "inception/mercury-2.5",
-    "opencode/muse-spark-1.3-contributor-free",
+    "inception/mercury-3",
+    "opencode/deepseek-v4.1-flash-free",
     "google-agy/gemini-3.8-flash",
     "openrouter/deepseek/deepseek-v4.1-flash",
   ],
 
   explore: [
     "google-agy/gemini-3.8-flash",
+    "opencode/glm-5.3-flash-free",
     "openrouter/z-ai/glm-5.3-flash",
     "openrouter/deepseek/deepseek-v4.1-flash",
   ],
 
   implement: [
     "anthropic/claude-sonnet-5-5",
-    "opencode/muse-spark-1.3-contributor-free",
+    "opencode/deepseek-v4.1-flash-free",
     // big TTFT but free
     "xkiro/qwen/qwen3.8-omni-flash:free",
     "openrouter/deepseek/deepseek-v4.1-flash",
-    "opencode/muse-spark-1.3-contributor-free",
     "google-agy/gemini-3.8-flash",
   ],
 
   "implement-hard": [
     "anthropic/claude-sonnet-5-5",
+    "opencode/deepseek-v4.1-flash-free",
     "openrouter/deepseek/deepseek-v4.1-flash",
     "google-agy/gemini-3.8-flash",
   ],
@@ -43,6 +44,8 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
     // remove after sub end
     "openai/gpt-6.1-sol",
     "google-agy/gemini-3.8-flash",
+    "opencode/glm-5.3-flash-free",
+    "opencode/deepseek-v4.1-flash-free",
     "openrouter/z-ai/glm-5.3-flash",
     "openrouter/deepseek/deepseek-v4.1-flash",
   ],

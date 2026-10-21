@@ -1,7 +1,7 @@
 ---
 description: Fast inexpensive worker for trivial localized tasks, obvious fixes, small transformations and simple questions.
 mode: subagent
-model: inception/mercury-2.5#medium
+model: inception/mercury-3#medium
 steps: 8
 
 permissions:
