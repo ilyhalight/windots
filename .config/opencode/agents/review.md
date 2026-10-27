@@ -1,7 +1,7 @@
 ---
 description: Strong independent reviewer for completed code, architecture proposals, technical decisions and complex implementation plans.
 mode: subagent
-model: openai/gpt-6.1-sol#high
+model: google-agy/gemini-3.8-flash#high
 steps: 25
 
 permissions:

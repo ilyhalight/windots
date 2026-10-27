@@ -42,7 +42,7 @@ const CHAINS: Record<string, readonly ModelRef[]> = {
 
   review: [
     // remove after sub end
-    "openai/gpt-6.1-sol",
+    // "openai/gpt-6.1-sol",
     "google-agy/gemini-3.8-flash",
     "opencode/glm-5.3-flash-free",
     "opencode/deepseek-v4.1-flash-free",

@@ -1,6 +1,32 @@
 /** @jsxImportSource @opentui/solid */
 import { Plugin } from "@opencode/plugin/tui"
-import { createSignal, Show } from "solid-js"
+import type { RGBA } from "@opentui/core"
+import { createEffect, createMemo, createSignal, Index, onCleanup, Show, type Accessor } from "solid-js"
+
+// Live speed comes from the tps plugin, which publishes plain data under this key (see its README). Nothing
+// is imported from it, so the two plugins share no modules; without tps there is simply no speed line.
+interface TpsSnapshot {
+  readonly phase: "waiting" | "streaming" | "paused" | "done"
+  readonly tier: "slow" | "normal" | "fast"
+  readonly approx: string
+  readonly avg: number
+  readonly spinner: string
+  readonly bars: readonly { readonly glyph: string; readonly tier: "slow" | "normal" | "fast" }[]
+  readonly text: { readonly rate: string; readonly avg: string; readonly tokens: string; readonly wait?: string }
+}
+interface TpsApi {
+  readonly version: 1
+  snapshot(sessionID: string): TpsSnapshot | undefined
+}
+const TPS_KEY = Symbol.for("opencode.tps")
+const SPEED_POLL_MS = 150
+/** Sparkline bars that fit the sidebar. */
+const SPEED_BARS = 8
+
+function tpsApi(): TpsApi | undefined {
+  const api = (globalThis as Record<symbol, unknown>)[TPS_KEY] as Partial<TpsApi> | undefined
+  return api?.version === 1 && typeof api.snapshot === "function" ? (api as TpsApi) : undefined
+}
 
 function formatTokens(value: number): string {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value)
@@ -106,11 +132,51 @@ export default Plugin.define({
 
         return (
           <Show when={label()}>
-            {(value) => <text>{value()}</text>}
+            {(value: Accessor<string>) => <text>{value()}</text>}
           </Show>
         )
       },
     })
+
+    // The child's speed as coloured pieces, in the same style as the tps footer line; undefined when unknown.
+    const speedLine = (id: string): { text: string; fg: RGBA }[] | undefined => {
+      let snapshot: TpsSnapshot | undefined
+      try {
+        snapshot = tpsApi()?.snapshot(id)
+      } catch {
+        return undefined
+      }
+      if (!snapshot) return undefined
+
+      const theme = context.theme
+      const muted = theme.text.muted
+      const accent = theme.hue.accent[context.themeMode === "dark" ? 400 : 600]
+      const feedback = theme.text.feedback
+      const tierColor = (tier: "slow" | "normal" | "fast") =>
+        (tier === "fast" ? feedback.success : tier === "normal" ? feedback.info : feedback.warning).base
+
+      switch (snapshot.phase) {
+        case "streaming":
+          return [
+            { text: snapshot.spinner, fg: accent },
+            { text: ` ${snapshot.text.rate.trim()}`, fg: tierColor(snapshot.tier) },
+            { text: " tok/s", fg: muted },
+            { text: " ", fg: muted },
+            ...snapshot.bars.slice(-SPEED_BARS).map((bar) => ({ text: bar.glyph, fg: tierColor(bar.tier) })),
+          ]
+        case "paused":
+          return [
+            {
+              text: snapshot.avg > 0 ? `avg ${snapshot.approx}${snapshot.text.avg} tok/s` : `${snapshot.approx}${snapshot.text.tokens} tok`,
+              fg: muted,
+            },
+          ]
+        case "waiting":
+          return [{ text: snapshot.text.wait ? `waiting ${snapshot.text.wait}` : "waiting", fg: muted }]
+        default:
+          return undefined
+      }
+    }
 
     const sidebarCleanup = context.ui.slot({
       append: "sidebar.content",
@@ -151,6 +217,32 @@ export default Plugin.define({
             })
         }
 
+        // tps keeps its numbers outside any reactive store, and the two plugins need not share one solid-js,
+        // so the speed lines re-read on a tick of their own, which runs only while there is something to show.
+        const [tick, setTick] = createSignal(0)
+        const polling = createMemo(() => tpsApi() !== undefined && running().length > 0)
+        createEffect(() => {
+          if (!polling()) return
+          const timer = setInterval(() => setTick((value) => value + 1), SPEED_POLL_MS)
+          onCleanup(() => clearInterval(timer))
+        })
+
+        const Speed = (props: { id: string }) => {
+          const parts = createMemo(() => {
+            tick()
+            return speedLine(props.id)
+          })
+          return (
+            <Show when={parts()}>
+              {(value: Accessor<{ text: string; fg: RGBA }[]>) => (
+                <text>
+                  <Index each={value()}>{(part) => <span style={{ fg: part().fg }}>{part().text}</span>}</Index>
+                </text>
+              )}
+            </Show>
+          )
+        }
+
         return (
           <Show when={running().length > 0}>
             <box flexDirection="column">
@@ -159,6 +251,7 @@ export default Plugin.define({
                 <box flexDirection="column">
                   <text>{child.name} · {child.model}</text>
                   <text>{formatTokens(child.tokens)} tokens · {formatCost(child.cost)}</text>
+                  <Speed id={child.id} />
                 </box>
               ))}
             </box>
